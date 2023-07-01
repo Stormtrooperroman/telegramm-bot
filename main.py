@@ -9,8 +9,8 @@ import numpy
 # from transformers import AutoTokenizer, AutoModelForCausalLM
 
 from TTS import tts
+from conf import BOT_TOKEN
 
-BOT_TOKEN: str = '6070150264:AAExDUSmdR_M8V_n-pFEFIEM1MclOrSe5Y4'
 
 bot: Bot = Bot(BOT_TOKEN)
 dp: Dispatcher = Dispatcher()
