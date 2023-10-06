@@ -6,7 +6,6 @@ from aiogram.filters import Command, CommandStart
 from aiogram.types import Message
 from aiogram.types import BufferedInputFile
 import numpy
-# from transformers import AutoTokenizer, AutoModelForCausalLM
 
 from TTS import tts
 from conf import BOT_TOKEN
