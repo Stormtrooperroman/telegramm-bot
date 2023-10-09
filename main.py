@@ -16,6 +16,12 @@ dp: Dispatcher = Dispatcher()
 
 
 def write_wave(audio: numpy.ndarray, sample_rate: int):
+    """
+    Конвертирует numpy.ndarray в wav формат.
+    :arg audio: numpy.ndarray # массив описывающий аудио
+    :arg sample_rate: int # частота дискретизации аудио файла
+    :return
+    """
     temp_file = io.BytesIO()
     with wave.open(temp_file, 'wb') as wf:
         wf.setnchannels(1)
@@ -69,5 +75,5 @@ async def send_msg(message: Message):
 
 
 if __name__ == '__main__':
-    print("HAAHHAAH")
+    print("Start bot!")
     dp.run_polling(bot)
