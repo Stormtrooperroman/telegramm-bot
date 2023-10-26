@@ -9,10 +9,13 @@ import numpy
 
 from TTS import tts
 from conf import BOT_TOKEN
-
+from dialogue import bot
 
 bot: Bot = Bot(BOT_TOKEN)
 dp: Dispatcher = Dispatcher()
+
+
+history = []
 
 
 def write_wave(audio: numpy.ndarray, sample_rate: int):
@@ -65,7 +68,8 @@ async def process_start_command(message: Message):
 async def send_msg(message: Message):
     print(message.chat.id)
     if message.text is not None and message.text != "":
-        audio = tts(message.text)
+        history = bot(message.text, history)
+        audio = tts(history[-1][1])
         audio_wav = write_wave(audio=(audio * 32767).numpy().astype('int16'),
                     sample_rate=48000)
         audio_ogg = wav_to_ogg_bytes(audio_wav)

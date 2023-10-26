@@ -1,0 +1,9 @@
+version: '2.2'
+services:
+    tgbot:  
+        build: .
+        image: tgbot
+        cpu_count: 4
+        pids_limit: 256
+        restart: always
+

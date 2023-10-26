@@ -1,9 +1,9 @@
 import os
 import array
 import torch
-from russtress import Accent
+from stressrnn import StressRNN
 
-accent = Accent()
+stress_rnn = StressRNN()
 
 
 
@@ -24,7 +24,7 @@ SPEAKER='baya'
 
 def tts(text):
     print(text)
-    text = accent.put_stress(text)
+    text = stress_rnn.put_stress(text)
     while text.find("'") != -1:
         index = text.find("'")
         s = array.array('u', text)
