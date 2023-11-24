@@ -1,21 +1,24 @@
 import subprocess
 import wave
 import io
+import json
+
 from aiogram import Bot, Dispatcher
 from aiogram.filters import Command, CommandStart
 from aiogram.types import Message
 from aiogram.types import BufferedInputFile
 import numpy
+import redis
 
 from TTS import tts
 from conf import BOT_TOKEN
-from dialogue import bot
+from dialogue import dialogue
 
 bot: Bot = Bot(BOT_TOKEN)
 dp: Dispatcher = Dispatcher()
 
 
-history = []
+redis_db = redis.Redis(host='redis', port=6379, decode_responses=True)
 
 
 def write_wave(audio: numpy.ndarray, sample_rate: int):
@@ -64,11 +67,19 @@ def wav_to_ogg_bytes(in_bytes: bytes) -> bytes:
 async def process_start_command(message: Message):
     await message.answer('Привет!\nМеня зовут Эхо-бот!\nНапиши мне что-нибудь')
 
+@dp.message(Command(commands=["clear"]))
+async def process_clear_command(message: Message):
+    redis_db.delete(f"{message.chat.id}")
+    await message.answer('История очищенна.')
+
 @dp.message()
 async def send_msg(message: Message):
-    print(message.chat.id)
     if message.text is not None and message.text != "":
-        history = bot(message.text, history)
+        history = []
+        if redis_db.exists(f"message.chat.id"):
+            history = json.loads(redis_db.get(f"{message.chat.id}"))
+        history = dialogue(message.text, history)
+        redis_db.set(f"{message.chat.id}", json.dumps(history))
         audio = tts(history[-1][1])
         audio_wav = write_wave(audio=(audio * 32767).numpy().astype('int16'),
                     sample_rate=48000)

@@ -6,4 +6,29 @@ services:
         cpu_count: 4
         pids_limit: 256
         restart: always
+        networks:
+            default:
+            internal:
+
+    redis:
+        container_name: redis
+        image: redis:4
+        restart: always
+        volumes:
+        - redis:/.data
+        networks:
+            internal:
+
+
+networks:
+    default:
+    internal:
+        internal: true
+
+
+volumes:
+  redis:
+
+
+
 

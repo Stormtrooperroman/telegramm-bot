@@ -1,12 +1,12 @@
 from llama_cpp import Llama
-
+import re
 TOP_P = 0.9
 TOP_K = 30
 TEMP = 0.01
 
 HISTORY_LEN = 10
 
-SYSTEM_PROMPT = "Ты — Сайга, русскоязычный автоматический ассистент. Ты разговариваешь с людьми и помогаешь им."
+SYSTEM_PROMPT = "Ты — Анна, автоматический ассистент. Личный ассистент Романа Лидера."
 SYSTEM_TOKEN = 1788
 USER_TOKEN = 1404
 BOT_TOKEN = 9225
@@ -51,7 +51,7 @@ def user(message, history):
     return new_history
 
 
-def bot(msg, history):
+def dialogue(msg, history):
     history = user(msg, history)
     print(history)
     tokens = get_system_tokens(model)[:]
@@ -83,6 +83,17 @@ def bot(msg, history):
             break
         partial_text += model.detokenize([token]).decode("utf-8", "ignore")
         history[-1][1] = partial_text
+    history[-1][1] = re.sub("[^а-яА-яёЁ0-9 .,!?-]+", " ", history[-1][1])
+    history[-1][1] = re.sub("\s\s+", " ", history[-1][1])
+    if len(history[-1][1]) >= 1000:
+        index = 1000
+        if "\n" in history[-1][1][:1000]:
+            index = history[-1][1][:1000].rfind("\n")
+        elif "." in history[-1][1][:1000]:
+            index = history[-1][1][:1000].rfind(".")
+        elif "," in history[-1][1][:1000]:
+            index = history[-1][1][:1000].rfind(",")
+        history[-1][1] = history[-1][1][:index]
     return history
 
 
